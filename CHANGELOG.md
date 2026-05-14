@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.2] - 2024-05-14
+### Fixed
+- Fixed app crashing on startup silently because of missing Shizuku initialization exceptions tracking. Added proper UI safety fallbacks if Shizuku pinging throws exception.
+- Restored `moe.shizuku.manager.permission.API_V23` back into AndroidManifest.xml.
+- Recreated the Application Logo with proper Android vector-based adaptive icons so it properly shows on modern launchers.
+
 ## [1.0.1] - 2024-05-14
 ### Fixed
 - Replaced direct `su` usage with Shizuku `newProcess` API for privileged command execution.

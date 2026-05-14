@@ -33,53 +33,66 @@ object ShizukuHelper {
         }
 
     fun initialize() {
-        Shizuku.addBinderReceivedListenerSticky(binderReceivedListener)
-        Shizuku.addBinderDeadListener(binderDeadListener)
-        Shizuku.addRequestPermissionResultListener(requestPermissionResultListener)
+        try {
+            Shizuku.addBinderReceivedListenerSticky(binderReceivedListener)
+            Shizuku.addBinderDeadListener(binderDeadListener)
+            Shizuku.addRequestPermissionResultListener(requestPermissionResultListener)
 
-        isShizukuAvailable.value = Shizuku.pingBinder()
-        if (isShizukuAvailable.value) {
-            checkPermission()
+            isShizukuAvailable.value = Shizuku.pingBinder()
+            if (isShizukuAvailable.value) {
+                checkPermission()
+            }
+        } catch (e: Throwable) {
+            Log.e(TAG, "Error initializing Shizuku: ", e)
+            isShizukuAvailable.value = false
+            hasShizukuPermission.value = false
         }
     }
 
     fun cleanup() {
-        Shizuku.removeBinderReceivedListener(binderReceivedListener)
-        Shizuku.removeBinderDeadListener(binderDeadListener)
-        Shizuku.removeRequestPermissionResultListener(requestPermissionResultListener)
+        try {
+            Shizuku.removeBinderReceivedListener(binderReceivedListener)
+            Shizuku.removeBinderDeadListener(binderDeadListener)
+            Shizuku.removeRequestPermissionResultListener(requestPermissionResultListener)
+        } catch (e: Throwable) {
+            Log.e(TAG, "Error cleaning up Shizuku: ", e)
+        }
     }
 
     fun checkPermission() {
-        if (!Shizuku.pingBinder()) {
-            isShizukuAvailable.value = false
-            hasShizukuPermission.value = false
-            return
-        }
-
         try {
+            if (!Shizuku.pingBinder()) {
+                isShizukuAvailable.value = false
+                hasShizukuPermission.value = false
+                return
+            }
+
             isShizukuAvailable.value = true
             hasShizukuPermission.value = Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
         } catch (e: Exception) {
-            if (e.cause is SecurityException) {
-                Log.e(TAG, "Permission error", e)
-            }
+            Log.e(TAG, "Permission error", e)
+        } catch (e: Throwable) {
+            Log.e(TAG, "Fatal error checking permission", e)
         }
     }
 
     fun requestPermission() {
-        if (!Shizuku.pingBinder()) {
-            return
-        }
+        try {
+            if (!Shizuku.pingBinder()) {
+                return
+            }
 
-        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
-            hasShizukuPermission.value = true
-            return
-        }
+            if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+                hasShizukuPermission.value = true
+                return
+            }
 
-        if (Shizuku.shouldShowRequestPermissionRationale()) {
-            Log.d(TAG, "Should show rationale for Shizuku")
-            // Can show a toast or dialog here
+            if (Shizuku.shouldShowRequestPermissionRationale()) {
+                Log.d(TAG, "Should show rationale for Shizuku")
+            }
+            Shizuku.requestPermission(1000)
+        } catch (e: Throwable) {
+            Log.e(TAG, "Error requesting permission", e)
         }
-        Shizuku.requestPermission(1000)
     }
 }
