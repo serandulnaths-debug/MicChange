@@ -71,6 +71,11 @@ object ShizukuHelper {
             return
         }
 
+        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+            hasShizukuPermission.value = true
+            return
+        }
+
         if (Shizuku.shouldShowRequestPermissionRationale()) {
             Log.d(TAG, "Should show rationale for Shizuku")
             // Can show a toast or dialog here

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,9 +13,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -68,6 +71,8 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
     var isBluetoothRouted by remember { mutableStateOf(false) }
     val isShizukuAvailable = ShizukuHelper.isShizukuAvailable.value
     val hasShizukuPermission = ShizukuHelper.hasShizukuPermission.value
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -130,11 +135,21 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
             Switch(
                 checked = isBluetoothRouted,
                 onCheckedChange = { checked ->
-                    isBluetoothRouted = checked
                     if (checked) {
-                        audioRouter.setBluetoothRouting()
+                        coroutineScope.launch {
+                            val success = audioRouter.setBluetoothRouting()
+                            isBluetoothRouted = success
+                            if (!success) {
+                                Toast.makeText(
+                                    context,
+                                    "Bluetooth microphone is not available or routing was rejected.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
                     } else {
                         audioRouter.setInternalRouting()
+                        isBluetoothRouted = false
                     }
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
