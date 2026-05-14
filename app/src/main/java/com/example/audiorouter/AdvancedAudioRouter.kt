@@ -1,48 +1,87 @@
 package com.example.audiorouter
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.os.Build
 import android.util.Log
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 class AdvancedAudioRouter(private val context: Context) {
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    @Suppress("DEPRECATION")
-    fun setBluetoothRouting() {
-        Log.d("AdvancedAudioRouter", "Attempting to force Bluetooth SCO routing via system settings")
+    suspend fun setBluetoothRouting(): Boolean {
+        Log.d("AdvancedAudioRouter", "Attempting to route to Bluetooth")
 
-        // Use AudioManager first
-        audioManager.startBluetoothSco()
-        audioManager.isBluetoothScoOn = true
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
-        // Attempt to enforce via Shizuku shell commands
         if (ShizukuHelper.hasShizukuPermission.value) {
-            // Android internal routing commands or global settings overrides
-            // e.g., appops or global settings
-            // Note: Direct shell commands for audio routing are limited.
-            // Often we can force permission 'android.permission.MODIFY_AUDIO_ROUTING' via appops.
-
             val packageName = context.packageName
-            val cmd = "appops set $packageName 10000 allow" // Internal permission might not work directly but we try standard ones
+            val cmd = "appops set $packageName 10000 allow"
             ShizukuCommandRunner.runCommand(cmd)
-
-            // Try enabling bluetooth sco directly if there are hidden commands
-            // There's no direct "set audio mic" shell command in modern Android,
-            // but we can grant our app MODIFY_AUDIO_ROUTING if it is defined.
             ShizukuCommandRunner.runCommand("pm grant $packageName android.permission.MODIFY_AUDIO_ROUTING")
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val bluetoothDevice = audioManager.availableCommunicationDevices
+                .firstOrNull {
+                    it.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO ||
+                    it.type == AudioDeviceInfo.TYPE_BLE_HEADSET
+                }
+
+            if (bluetoothDevice != null) {
+                audioManager.setCommunicationDevice(bluetoothDevice)
+            } else {
+                false
+            }
+        } else {
+            suspendCancellableCoroutine { continuation ->
+                val receiver = object : BroadcastReceiver() {
+                    override fun onReceive(c: Context?, intent: Intent?) {
+                        if (intent?.action == AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED) {
+                            val state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_ERROR)
+                            if (state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
+                                context.unregisterReceiver(this)
+                                if (continuation.isActive) continuation.resume(true)
+                            } else if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED || state == AudioManager.SCO_AUDIO_STATE_ERROR) {
+                                context.unregisterReceiver(this)
+                                if (continuation.isActive) continuation.resume(false)
+                            }
+                        }
+                    }
+                }
+
+                context.registerReceiver(receiver, IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED))
+
+                @Suppress("DEPRECATION")
+                audioManager.startBluetoothSco()
+
+                @Suppress("DEPRECATION")
+                audioManager.isBluetoothScoOn = true
+
+                continuation.invokeOnCancellation {
+                    context.unregisterReceiver(receiver)
+                }
+            }
         }
     }
 
-    @Suppress("DEPRECATION")
     fun setInternalRouting() {
         Log.d("AdvancedAudioRouter", "Attempting to force internal routing")
 
-        audioManager.stopBluetoothSco()
-        audioManager.isBluetoothScoOn = false
-
-        if (ShizukuHelper.hasShizukuPermission.value) {
-            // val packageName = context.packageName
-            // Cleanup routing permissions if needed
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            audioManager.clearCommunicationDevice()
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.stopBluetoothSco()
+            @Suppress("DEPRECATION")
+            audioManager.isBluetoothScoOn = false
         }
+
+        audioManager.mode = AudioManager.MODE_NORMAL
     }
 }

@@ -10,18 +10,24 @@ object ShizukuCommandRunner {
             return false
         }
 
-        try {
-            // Usually we use Shizuku system service commands, but for simple appops we can try
-            // a custom binder call. If we just need basic shell commands, we can use `sh` via Shizuku.
-            val p = Runtime.getRuntime().exec(arrayOf("su", "-c", command))
-            // Shizuku provides 'shizuku_newProcess' internally, but standard API has changed.
-            // Using standard su command as fallback, but shizuku provides a way via Rikka API.
+        return try {
+            // newProcess is hidden API. We can call it via reflection
+            // signature: static Process newProcess(String[] cmd, String[] env, String dir)
+            val method = Shizuku::class.java.getDeclaredMethod(
+                "newProcess",
+                Array<String>::class.java,
+                Array<String>::class.java,
+                String::class.java
+            )
+            method.isAccessible = true
 
-            p.waitFor()
-            return p.exitValue() == 0
+            val process = method.invoke(null, arrayOf("sh", "-c", command), null, null) as Process
+
+            val exitCode = process.waitFor()
+            exitCode == 0
         } catch (ex: Exception) {
             Log.e("ShizukuCommandRunner", "Failed to run command", ex)
-            return false
+            false
         }
     }
 }
