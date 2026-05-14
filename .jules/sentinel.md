@@ -1,0 +1,4 @@
+## 2024-05-24 - Command Injection in Shizuku Command Runner
+**Vulnerability:** The `ShizukuCommandRunner.runCommand` function accepted a single string `command` and executed it via `arrayOf("sh", "-c", command)` using Shizuku's `newProcess` reflection API. This created a severe command injection vulnerability if user-controlled input (like package names or other parameters) were ever passed into the string without proper escaping.
+**Learning:** Shell wrapping (`sh -c`) evaluates the entire string as a shell script, allowing operators like `;`, `&&`, and `||` to execute arbitrary secondary commands with Shizuku (root/adb) privileges.
+**Prevention:** Avoid shell wrapping when executing processes. Use array-based execution (`List<String>`) where the first element is the executable and subsequent elements are exactly its arguments, completely bypassing the shell's parsing logic.
