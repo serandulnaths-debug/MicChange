@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
     var isBluetoothRouted by remember { mutableStateOf(false) }
+    var isRouting by remember { mutableStateOf(false) }
     val isShizukuAvailable = ShizukuHelper.isShizukuAvailable.value
     val hasShizukuPermission = ShizukuHelper.hasShizukuPermission.value
     val coroutineScope = rememberCoroutineScope()
@@ -134,11 +135,14 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
 
             Switch(
                 checked = isBluetoothRouted,
+                enabled = !isRouting,
                 onCheckedChange = { checked ->
                     if (checked) {
                         coroutineScope.launch {
+                            isRouting = true
                             val success = audioRouter.setBluetoothRouting()
                             isBluetoothRouted = success
+                            isRouting = false
                             if (!success) {
                                 Toast.makeText(
                                     context,
@@ -152,7 +156,18 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
                         isBluetoothRouted = false
                     }
                 },
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
+                thumbContent = if (isRouting) {
+                    {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 2.dp
+                        )
+                    }
+                } else {
+                    null
+                }
             )
 
             Text(
