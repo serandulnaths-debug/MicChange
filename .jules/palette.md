@@ -1,0 +1,3 @@
+## 2024-05-24 - Row-level Toggleable for Switches
+**Learning:** In Jetpack Compose, a standalone `Switch` surrounded by text often has a poor touch target size and poor screen reader semantics (the text isn't associated with the switch action).
+**Action:** Always apply `Modifier.toggleable()` to the parent layout (like a `Row`) that contains the text and the switch. Assign `role = Role.Switch` to the modifier, and set the internal `Switch`'s `onCheckedChange` to `null`. This expands the touch target, groups the semantics for screen readers, and makes the UI much more accessible.
