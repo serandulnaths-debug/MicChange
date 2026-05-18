@@ -1,0 +1,4 @@
+## 2024-11-20 - Prevent Command Injection in Shizuku newProcess
+**Vulnerability:** The application executed system commands via Shizuku's reflection `newProcess` API using a shell wrapper: `arrayOf("sh", "-c", command)`. This allows arbitrary command injection if `command` includes unvalidated or malformed parts.
+**Learning:** Shell wrappers like `sh -c` interpret shell metacharacters and multiple commands. When using APIs like `ProcessBuilder` or Shizuku's `newProcess`, passing commands as an array (`List<String>`) directly to the executable avoids the shell parsing step, nullifying command injection vulnerabilities.
+**Prevention:** Never use shell wrappers (`sh -c`) when executing system commands. Always execute commands using array-based execution (`List<String>`) so that arguments are passed safely directly to the executable without shell parsing.
