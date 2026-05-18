@@ -1,0 +1,3 @@
+## 2026-05-18 - Increase Switch Touch Targets
+**Learning:** In Jetpack Compose, wrapping a `Switch` and its label(s) in a `Row` and relying on the default switch touch target creates poor UX, particularly for users with motor difficulties, and provides suboptimal screen reader semantics.
+**Action:** Apply `Modifier.toggleable()` with `role = Role.Switch` to the parent `Row` and set the inner `Switch`'s `onCheckedChange` parameter to `null`. This expands the clickable area to include the labels and groups the items into a single, cohesive toggleable control for screen readers.
