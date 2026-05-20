@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Improved UX and Accessibility in MainActivity by applying `Modifier.toggleable` and `Role.Switch` to the entire row of the audio input switch, significantly increasing its touch target size.
+
 ## [1.0.1] - 2024-05-14
 ### Fixed
 - Replaced direct `su` usage with Shizuku `newProcess` API for privileged command execution.
