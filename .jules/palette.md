@@ -1,0 +1,3 @@
+## 2024-05-24 - Improve Touch Target and Semantics for Switch
+**Learning:** In Jetpack Compose, a standalone `Switch` accompanied by unlinked text labels creates small touch targets and fragmented screen reader announcements.
+**Action:** Always apply `Modifier.toggleable()` (with `role = Role.Switch`) to the parent layout (e.g., `Row`) of a `Switch` and its text label, and set the internal `Switch`'s `onCheckedChange` to `null` to unify semantics and expand the touch target.
