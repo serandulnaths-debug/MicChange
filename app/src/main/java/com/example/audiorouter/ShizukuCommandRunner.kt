@@ -1,27 +1,29 @@
 package com.example.audiorouter
 
 import android.util.Log
+import java.lang.reflect.Method
 import rikka.shizuku.Shizuku
 
 object ShizukuCommandRunner {
-    fun runCommand(command: String): Boolean {
+
+    private val newProcessMethod: Method by lazy {
+        Shizuku::class.java.getDeclaredMethod(
+            "newProcess",
+            Array<String>::class.java,
+            Array<String>::class.java,
+            String::class.java
+        ).apply { isAccessible = true }
+    }
+
+    fun runCommand(command: List<String>): Boolean {
         if (!Shizuku.pingBinder()) {
             Log.e("ShizukuCommandRunner", "Shizuku binder is not available.")
             return false
         }
 
         return try {
-            // newProcess is hidden API. We can call it via reflection
-            // signature: static Process newProcess(String[] cmd, String[] env, String dir)
-            val method = Shizuku::class.java.getDeclaredMethod(
-                "newProcess",
-                Array<String>::class.java,
-                Array<String>::class.java,
-                String::class.java
-            )
-            method.isAccessible = true
-
-            val process = method.invoke(null, arrayOf("sh", "-c", command), null, null) as Process
+            // Use array-based execution to prevent command injection
+            val process = newProcessMethod.invoke(null, command.toTypedArray(), null, null) as Process
 
             val exitCode = process.waitFor()
             exitCode == 0
