@@ -1,0 +1,4 @@
+## 2026-05-23 - Command Injection in Shizuku Command Runner
+**Vulnerability:** Command injection vulnerability due to the use of a shell wrapper (`sh -c`) and passing unsanitized strings to Shizuku's `newProcess` reflection API.
+**Learning:** The wrapper was used to easily run commands but allowed for potential injection if command strings were maliciously crafted or manipulated. It is safer to use array-based execution to let the OS parse the command instead of a shell.
+**Prevention:** When executing processes via Shizuku's `newProcess` reflection API, always use array-based execution (`List<String>`) instead of shell wrappers like `sh -c` to prevent command injection vulnerabilities.

@@ -21,9 +21,10 @@ class AdvancedAudioRouter(private val context: Context) {
 
         if (ShizukuHelper.hasShizukuPermission.value) {
             val packageName = context.packageName
-            val cmd = "appops set $packageName 10000 allow"
-            ShizukuCommandRunner.runCommand(cmd)
-            ShizukuCommandRunner.runCommand("pm grant $packageName android.permission.MODIFY_AUDIO_ROUTING")
+            val cmdAppOps = listOf("appops", "set", packageName, "10000", "allow")
+            ShizukuCommandRunner.runCommand(cmdAppOps)
+            val cmdGrant = listOf("pm", "grant", packageName, "android.permission.MODIFY_AUDIO_ROUTING")
+            ShizukuCommandRunner.runCommand(cmdGrant)
         }
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
