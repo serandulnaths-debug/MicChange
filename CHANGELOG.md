@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Performance: Cached reflection lookup in `ShizukuCommandRunner` to improve command execution speed.
+
 ## [1.0.1] - 2024-05-14
 ### Fixed
 - Replaced direct `su` usage with Shizuku `newProcess` API for privileged command execution.
