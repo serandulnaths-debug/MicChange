@@ -3,6 +3,24 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
+fun getKeystoreProperty(propertyName: String): String {
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    if (keystorePropertiesFile.exists()) {
+        val properties = Properties()
+        FileInputStream(keystorePropertiesFile).use {
+            properties.load(it)
+        }
+        val propertyValue = properties.getProperty(propertyName)
+        if (propertyValue != null) {
+            return propertyValue
+        }
+    }
+    return System.getenv(propertyName) ?: project.findProperty(propertyName) as? String ?: ""
+}
+
 android {
     namespace = "com.example.audiorouter"
     compileSdk = 35
@@ -22,9 +40,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("../release.keystore")
-            storePassword = "password"
+            storePassword = getKeystoreProperty("storePassword")
             keyAlias = "release"
-            keyPassword = "password"
+            keyPassword = getKeystoreProperty("keyPassword")
         }
     }
 
