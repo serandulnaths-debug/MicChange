@@ -1,0 +1,3 @@
+## 2026-05-25 - Improve Switch Touch Target and Semantics
+**Learning:** In Jetpack Compose, wrapping a `Switch` and its text labels inside a `Row` can lead to poor UX if only the `Switch` is interactive. The touch target is small, and screen readers read the labels and the switch as separate elements.
+**Action:** Apply `Modifier.toggleable()` (with `role = Role.Switch`) to the parent `Row`, moving the state management and toggling logic there, and set the internal `Switch`'s `onCheckedChange` to `null`. This unifies the interactive area, expanding the touch target to the whole row and grouping the semantics for screen readers.
