@@ -4,7 +4,8 @@ import android.util.Log
 import rikka.shizuku.Shizuku
 
 object ShizukuCommandRunner {
-    fun runCommand(command: String): Boolean {
+    // Security Fix: Accept List<String> instead of a single string command to prevent command injection
+    fun runCommand(command: List<String>): Boolean {
         if (!Shizuku.pingBinder()) {
             Log.e("ShizukuCommandRunner", "Shizuku binder is not available.")
             return false
@@ -21,7 +22,9 @@ object ShizukuCommandRunner {
             )
             method.isAccessible = true
 
-            val process = method.invoke(null, arrayOf("sh", "-c", command), null, null) as Process
+            // Pass the command arguments directly as an array instead of wrapping in sh -c
+            // This prevents command injection since the arguments are not evaluated by a shell
+            val process = method.invoke(null, command.toTypedArray(), null, null) as Process
 
             val exitCode = process.waitFor()
             exitCode == 0
