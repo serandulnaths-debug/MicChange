@@ -1,0 +1,3 @@
+## 2024-03-24 - Cache Shizuku reflection lookups
+**Learning:** Calling `Class.getDeclaredMethod` repeatedly via reflection for Shizuku's `newProcess` command runner is expensive. By caching the reflected method using Kotlin's `by lazy` delegate, we can significantly reduce overhead when executing frequent system commands.
+**Action:** Use a `lazy` property to cache reflected methods to avoid repeated expensive reflection lookups and improve performance.
