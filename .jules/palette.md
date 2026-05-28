@@ -1,0 +1,3 @@
+## 2024-05-28 - Expand Switch Touch Targets using Row Toggleable
+**Learning:** Placing a `Switch` in Jetpack Compose directly without adding `Modifier.toggleable` to its parent layout (e.g., `Row`) limits the touch target strictly to the switch's visual size, violating minimum touch target accessibility guidelines and ignoring screen reader semantics for the associated label text.
+**Action:** When using a `Switch`, always apply `Modifier.toggleable(value = state, role = Role.Switch, onValueChange = { ... })` to the parent layout that contains both the `Switch` and its label text. Additionally, set the `Switch`'s `onCheckedChange` argument to `null` to ensure the parent layout handles the interaction properly.
