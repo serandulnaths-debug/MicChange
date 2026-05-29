@@ -1,0 +1,3 @@
+## 2024-05-18 - Caching Shizuku Reflection
+**Learning:** Shizuku's hidden APIs (like `newProcess`) require reflection to access. Repeatedly looking up these methods using `getDeclaredMethod` in frequently called functions (e.g., executing commands) creates unnecessary CPU overhead and slows down execution.
+**Action:** Always cache reflected methods in a `lazy` property block in Kotlin objects to ensure the lookup only happens once per app lifecycle, avoiding repeated expensive reflection costs.
