@@ -1,0 +1,3 @@
+## 2026-05-30 - Improve Switch Touch Targets and Semantics
+**Learning:** By default, a Jetpack Compose `Switch` has a small touch target, and if it's placed next to text describing it, screen readers may announce them as separate elements.
+**Action:** Apply `Modifier.toggleable(value = ..., role = Role.Switch, onValueChange = { ... })` to the parent layout (e.g., a `Row`) containing the `Switch` and its text label. Set the internal `Switch`'s `onCheckedChange` to `null`. This increases the touch target size significantly and ensures the entire row is announced as a single interactive switch by screen readers.
