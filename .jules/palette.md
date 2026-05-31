@@ -1,0 +1,3 @@
+## 2024-05-31 - Improve Touch Targets for Compose Switch
+**Learning:** In Jetpack Compose, an isolated `Switch` without an associated label limits the touch target to just the switch itself, and its screen reader semantics might lack context. By applying `Modifier.toggleable` with `role = Role.Switch` to a parent container (like a `Row`) that includes both the `Switch` and its text label, the entire area becomes a unified touch target with improved screen reader semantics.
+**Action:** When implementing `Switch`, `Checkbox`, or `RadioButton` components with adjacent text labels, always apply `Modifier.toggleable` (or `selectable`) to the parent container and set the inner component's `onCheckedChange` to `null` to ensure an accessible touch target and better semantics.
