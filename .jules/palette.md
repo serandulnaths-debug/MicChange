@@ -1,0 +1,3 @@
+## 2026-06-04 - Jetpack Compose Switch Accessibility
+**Learning:** In Jetpack Compose, wrapping a `Switch` and its text labels within a parent layout (like `Row`) without delegating the toggle action leaves the text labels unclickable and reduces the overall touch target size. This provides a poor user experience and degrades screen reader semantics.
+**Action:** When placing a `Switch` alongside descriptive text labels in a layout, always apply `Modifier.toggleable()` with `role = Role.Switch` to the parent layout (e.g., `Row`). Move the toggle logic to the parent's `onValueChange` and explicitly set the internal `Switch`'s `onCheckedChange` to `null`. This unifies the touch target and improves accessibility.
