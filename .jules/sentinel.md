@@ -1,0 +1,4 @@
+## 2024-05-24 - Avoid Command Injection with Shizuku newProcess API
+**Vulnerability:** Command injection vulnerability in `ShizukuCommandRunner.runCommand` due to passing a single command string to `sh -c`.
+**Learning:** Using shell wrappers (`sh -c`) with unsanitized input allows attackers to inject arbitrary commands. Shizuku's `newProcess` reflection API allows executing processes. When executing processes, it's safer to use an array of arguments to avoid shell parsing vulnerabilities.
+**Prevention:** Always use array-based execution (`List<String>` or `Array<String>`) instead of shell wrappers when executing processes to ensure proper tokenization and prevent command injection vulnerabilities. Use `cmd.split(" ")` if the input is a static safe string, or explicitly build a list of arguments. In this case, pass the command as `List<String>`.
