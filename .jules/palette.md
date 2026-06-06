@@ -1,0 +1,3 @@
+## 2026-06-06 - Improve Switch Touch Target and Semantics
+**Learning:** In Jetpack Compose, wrapping a `Switch` and its text labels inside a `Row` doesn't automatically make the whole row clickable or readable as a single semantic unit by screen readers. Relying solely on the `Switch` component's tap target can lead to poor touch accessibility.
+**Action:** Apply `Modifier.toggleable(value = isChecked, role = Role.Switch, onValueChange = { ... })` to the parent `Row` and set the inner `Switch`'s `onCheckedChange` to `null`. This expands the touch target and combines the semantics into a single element.
