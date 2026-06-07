@@ -1,0 +1,3 @@
+## 2024-05-14 - Improve Switch Accessibility
+**Learning:** In Jetpack Compose, wrapping a Switch and its text labels within a parent layout (like a Row) using `Modifier.toggleable()` with `role = Role.Switch` drastically improves touch target size and provides correct semantics for screen readers, compared to setting the toggle logic solely on the Switch itself.
+**Action:** Always consider the touch target and screen reader context when building toggleable UI elements. Apply `Modifier.toggleable` to the parent container when a Switch has accompanying labels, and set the internal Switch's `onCheckedChange` to null.
