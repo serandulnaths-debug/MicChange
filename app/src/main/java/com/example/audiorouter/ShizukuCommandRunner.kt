@@ -4,7 +4,7 @@ import android.util.Log
 import rikka.shizuku.Shizuku
 
 object ShizukuCommandRunner {
-    fun runCommand(command: String): Boolean {
+    fun runCommand(command: List<String>): Boolean {
         if (!Shizuku.pingBinder()) {
             Log.e("ShizukuCommandRunner", "Shizuku binder is not available.")
             return false
@@ -21,7 +21,7 @@ object ShizukuCommandRunner {
             )
             method.isAccessible = true
 
-            val process = method.invoke(null, arrayOf("sh", "-c", command), null, null) as Process
+            val process = method.invoke(null, command.toTypedArray(), null, null) as Process
 
             val exitCode = process.waitFor()
             exitCode == 0
