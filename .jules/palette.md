@@ -1,0 +1,3 @@
+## 2024-05-23 - Improve touch target for Switch components
+**Learning:** Using `Modifier.toggleable` with `Role.Switch` on the parent container (like `Row`) significantly improves accessibility. It increases the touch target size, making it easier for users with motor difficulties to tap, and correctly announces the entire row as a single toggleable unit to screen readers, rather than reading the text and the switch as separate entities.
+**Action:** Always apply `Modifier.toggleable` to the parent container when a `Switch` is accompanied by text labels, setting the internal `Switch`'s `onCheckedChange` to `null`.
