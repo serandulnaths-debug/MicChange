@@ -1,6 +1,29 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+}
+
+fun getSecretProperty(properties: Properties, key: String, envKey: String): String {
+    val propValue = properties.getProperty(key)
+    if (propValue != null) {
+        return propValue
+    }
+    val envValue = System.getenv(envKey)
+    if (envValue != null) {
+        return envValue
+    }
+    return ""
+}
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use {
+        keystoreProperties.load(it)
+    }
 }
 
 android {
@@ -22,9 +45,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("../release.keystore")
-            storePassword = "password"
-            keyAlias = "release"
-            keyPassword = "password"
+            storePassword = getSecretProperty(keystoreProperties, "storePassword", "KEYSTORE_PASSWORD")
+            keyAlias = getSecretProperty(keystoreProperties, "keyAlias", "KEY_ALIAS").ifEmpty { "release" }
+            keyPassword = getSecretProperty(keystoreProperties, "keyPassword", "KEY_PASSWORD")
         }
     }
 
