@@ -13,6 +13,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -124,7 +126,30 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .toggleable(
+                    value = isBluetoothRouted,
+                    onValueChange = { checked ->
+                        if (checked) {
+                            coroutineScope.launch {
+                                val success = audioRouter.setBluetoothRouting()
+                                isBluetoothRouted = success
+                                if (!success) {
+                                    Toast.makeText(
+                                        context,
+                                        "Bluetooth microphone is not available or routing was rejected.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        } else {
+                            audioRouter.setInternalRouting()
+                            isBluetoothRouted = false
+                        }
+                    },
+                    role = Role.Switch
+                )
         ) {
             Text(
                 text = "Internal Mic",
@@ -134,24 +159,7 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
 
             Switch(
                 checked = isBluetoothRouted,
-                onCheckedChange = { checked ->
-                    if (checked) {
-                        coroutineScope.launch {
-                            val success = audioRouter.setBluetoothRouting()
-                            isBluetoothRouted = success
-                            if (!success) {
-                                Toast.makeText(
-                                    context,
-                                    "Bluetooth microphone is not available or routing was rejected.",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                    } else {
-                        audioRouter.setInternalRouting()
-                        isBluetoothRouted = false
-                    }
-                },
+                onCheckedChange = null,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
