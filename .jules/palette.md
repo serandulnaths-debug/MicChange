@@ -1,0 +1,3 @@
+## 2024-05-24 - Improve Jetpack Compose Switch Accessibility
+**Learning:** By default, Jetpack Compose `Switch` components only have a touch target for the switch element itself, which can be difficult to hit, and doesn't inherently include adjacent labels in screen reader semantics.
+**Action:** Use `Modifier.toggleable(value = isChecked, role = Role.Switch, onValueChange = { ... })` on the parent layout (e.g., `Row`) of the switch and its label. Set the internal `Switch`'s `onCheckedChange` to `null` to avoid redundant accessibility actions. This creates a larger touch target and unifies the semantics for screen readers.
