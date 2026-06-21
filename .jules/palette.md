@@ -1,0 +1,3 @@
+## 2024-05-24 - Improve Switch Touch Target and Accessibility
+**Learning:** By default, Jetpack Compose Switch elements have small touch targets and screen readers announce them individually from their surrounding text context. Wrapping the Switch and its descriptive text in a Row with `Modifier.toggleable(role = Role.Switch)` drastically improves the clickable area and provides cohesive semantics to accessibility services.
+**Action:** Whenever using a Switch alongside descriptive text, always apply `Modifier.toggleable` to the parent container, assign `Role.Switch`, and set the internal Switch's `onCheckedChange` to null.
