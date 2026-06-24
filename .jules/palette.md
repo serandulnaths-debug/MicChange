@@ -1,0 +1,3 @@
+## 2024-06-24 - Map permission states to UI enabled states
+**Learning:** Missing system permissions (like Shizuku) can cause silent failures when interacting with UI elements. Explicitly mapping permission states to the `enabled` state of interactive elements prevents user confusion. Additionally, Jetpack Compose UI elements like Switches need `semantics { contentDescription = "..." }` attached for proper screen-reader accessibility.
+**Action:** Always map required permission states to the `enabled` attribute of interactive elements and use `semantics { contentDescription = "..." }` on custom or standalone controls to ensure they are accessible and provide clear interactive affordances.
