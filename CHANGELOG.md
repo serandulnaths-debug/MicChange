@@ -2,6 +2,7 @@
 
 ## [1.0.1] - 2024-05-14
 ### Fixed
+- Cached Shizuku `newProcess` Java reflection method lookup to improve system command execution performance.
 - Replaced direct `su` usage with Shizuku `newProcess` API for privileged command execution.
 - Fixed `ShizukuProvider` class name in `AndroidManifest.xml` which caused app crashing on startup.
 - Fixed `AdvancedAudioRouter` to use modern Android 12+ API `setCommunicationDevice` to reliably route audio to a Bluetooth SCO microphone.
