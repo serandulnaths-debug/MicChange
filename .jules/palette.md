@@ -1,0 +1,3 @@
+## 2024-07-06 - Add explicit enabled state and semantics to Bluetooth switch
+**Learning:** In Jetpack Compose, interactive elements relying on system permissions (like Shizuku) can silently fail if their `enabled` state doesn't reflect the permission status, confusing users. Furthermore, icon or toggle-only switches require explicit `semantics { contentDescription = "..." }` for proper screen-reader accessibility.
+**Action:** Always map system permission states to the `enabled` properties of relevant UI components to provide visual feedback of their unavailability, and attach semantic content descriptions to toggle elements for screen readers.
