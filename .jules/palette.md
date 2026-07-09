@@ -1,0 +1,3 @@
+## 2024-05-24 - Mapping System Permissions to UI State in Compose
+**Learning:** In Jetpack Compose, interactive elements relying on system-level permissions (like Shizuku) can cause silent failures or confusion for users if they remain enabled without the requisite permissions. Furthermore, interactive toggle switches require explicit `semantics` content descriptions for screen-reader accessibility.
+**Action:** Explicitly map system permission states to the `enabled` attribute of interactive UI elements and attach `semantics { contentDescription = "..." }` to improve accessibility and prevent silent failures.
