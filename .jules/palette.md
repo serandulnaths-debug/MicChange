@@ -1,0 +1,3 @@
+## 2024-05-18 - Disable Interactive Elements Tied to Missing System Permissions
+**Learning:** In Jetpack Compose, failing to explicitly map system permission states (e.g., Shizuku availability) to the `enabled` states of interactive UI elements can lead to silent failures and a confusing user experience. Additionally, simple custom controls need explicit semantics for screen-reader accessibility.
+**Action:** Always map system permission states to the `enabled` states of interactive UI elements to prevent silent failures. Attach `semantics { contentDescription = "..." }` to interactive controls for screen-reader accessibility.
