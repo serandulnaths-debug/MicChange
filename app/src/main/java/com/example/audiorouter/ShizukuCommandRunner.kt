@@ -4,6 +4,16 @@ import android.util.Log
 import rikka.shizuku.Shizuku
 
 object ShizukuCommandRunner {
+    // ⚡ Bolt: Cache Shizuku newProcess method reflection to prevent repetitive O(N) lookup overhead
+    private val newProcessMethod by lazy {
+        Shizuku::class.java.getDeclaredMethod(
+            "newProcess",
+            Array<String>::class.java,
+            Array<String>::class.java,
+            String::class.java
+        ).apply { isAccessible = true }
+    }
+
     fun runCommand(command: String): Boolean {
         if (!Shizuku.pingBinder()) {
             Log.e("ShizukuCommandRunner", "Shizuku binder is not available.")
@@ -11,17 +21,7 @@ object ShizukuCommandRunner {
         }
 
         return try {
-            // newProcess is hidden API. We can call it via reflection
-            // signature: static Process newProcess(String[] cmd, String[] env, String dir)
-            val method = Shizuku::class.java.getDeclaredMethod(
-                "newProcess",
-                Array<String>::class.java,
-                Array<String>::class.java,
-                String::class.java
-            )
-            method.isAccessible = true
-
-            val process = method.invoke(null, arrayOf("sh", "-c", command), null, null) as Process
+            val process = newProcessMethod.invoke(null, arrayOf("sh", "-c", command), null, null) as Process
 
             val exitCode = process.waitFor()
             exitCode == 0
