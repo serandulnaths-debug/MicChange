@@ -1,0 +1,3 @@
+## 2024-05-24 - Cache Java Reflection Method for Shizuku
+**Learning:** In Kotlin applications using Shizuku, dynamically looking up hidden API methods via `getDeclaredMethod` on every invocation incurs repeated O(N) lookup overhead. Caching `java.lang.reflect.Method` objects indefinitely using a `lazy` property inside a singleton is safe and does not cause memory leaks, as `Method` objects do not hold onto class instances.
+**Action:** Always cache `Method` objects using `lazy` delegates inside a singleton object when using Java reflection to access hidden APIs in Kotlin applications to prevent performance bottlenecks on repeated invocations.
