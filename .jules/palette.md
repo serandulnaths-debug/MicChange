@@ -1,0 +1,3 @@
+## 2026-07-21 - Add UX semantics and disable state to Jetpack Compose Switch
+**Learning:** In Jetpack Compose, interactive elements like Switch can silently fail if their underlying dependencies (like system permissions or Shizuku access) are not met. Using `enabled = hasPermission` clearly communicates state, while `semantics { contentDescription = "..." }` ensures screen readers can announce the element's purpose, which is critical for accessibility in icon/switch-only rows.
+**Action:** Always map system permission states to the `enabled` states of interactive UI elements and attach `semantics` to unlabelled controls in Jetpack Compose to prevent silent failures and improve screen-reader accessibility.
