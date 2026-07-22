@@ -1,0 +1,3 @@
+## 2024-07-22 - Map system permissions to interactive element states and semantics
+**Learning:** System permissions required for an action (like Shizuku routing) must map to UI `enabled` states to prevent silent failures and user confusion. Without this, users click interactive elements with no feedback. Adding `semantics { contentDescription = "..." }` also ensures screen-reader accessibility for toggle states.
+**Action:** When an interactive element depends on a system-level permission, explicitly bind its `enabled` state to the permission's availability and attach meaningful `contentDescription` semantics for screen readers.
