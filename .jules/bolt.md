@@ -1,0 +1,3 @@
+## 2024-07-26 - Cache Shizuku Reflection Method
+**Learning:** The Global Audio Router application repeatedly calls `Shizuku.newProcess` via Java reflection inside `ShizukuCommandRunner.runCommand` for every system command execution. Reflection lookups in Android are notoriously slow, particularly when executed frequently (e.g. routing audio components).
+**Action:** Caching the reflection `Method` object lookup using Kotlin's `lazy` delegate inside the singleton object significantly reduces the overhead on repeated calls, while safely maintaining the `Method` object which does not hold onto potentially leaking class instances.
