@@ -134,6 +134,7 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
 
             Switch(
                 checked = isBluetoothRouted,
+                enabled = isShizukuAvailable && hasShizukuPermission,
                 onCheckedChange = { checked ->
                     if (checked) {
                         coroutineScope.launch {
