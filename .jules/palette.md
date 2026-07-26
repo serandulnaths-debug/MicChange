@@ -1,0 +1,3 @@
+## 2024-11-20 - Disable interactive elements when underlying dependencies are missing
+**Learning:** Interactive Compose UI components (like Switch) can silently fail or create a confusing UX if their underlying required dependencies (e.g., Shizuku system-level permissions) are missing, as they still visually respond to user input without actually performing the action.
+**Action:** Always explicitly map required system states or permissions (e.g., `isShizukuAvailable` and `hasShizukuPermission`) to the `enabled` property of interactive UI elements to visually communicate unavailability and prevent confusing, non-functional interactions.
