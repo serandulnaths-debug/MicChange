@@ -1,0 +1,13 @@
+1. Create `.jules/bolt.md` journal entry
+   - Use `run_in_bash_session` to create the `.jules` directory and write `.jules/bolt.md` with the critical learning about caching reflection methods.
+2. Verify `.jules/bolt.md` contents
+   - Use `run_in_bash_session` with `cat .jules/bolt.md` to ensure the file was written correctly.
+3. Modify `app/src/main/java/com/example/audiorouter/ShizukuCommandRunner.kt`
+   - Use `replace_with_git_merge_diff` to introduce a `lazy` property `newProcessMethod` that caches the reflection lookup of `Shizuku.newProcess`, and use it inside `runCommand`.
+4. Run testing, compilation, and linting
+   - Use `run_in_bash_session` to execute `./gradlew compileDebugKotlin`
+   - Use `run_in_bash_session` to execute `./gradlew lint`
+   - Use `run_in_bash_session` to execute `./gradlew test`
+5. Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
+6. Submit the pull request
+   - Use `submit` to create a PR with the title "⚡ Bolt: Cache Shizuku newProcess method reflection" and a description detailing the What, Why, Impact, and Measurement.
