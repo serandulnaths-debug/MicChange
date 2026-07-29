@@ -13,6 +13,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -152,7 +154,10 @@ fun AudioRouterScreen(audioRouter: AdvancedAudioRouter) {
                         isBluetoothRouted = false
                     }
                 },
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .semantics { contentDescription = "Toggle Bluetooth Microphone Routing" },
+                enabled = isShizukuAvailable && hasShizukuPermission
             )
 
             Text(
