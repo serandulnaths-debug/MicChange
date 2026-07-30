@@ -1,0 +1,3 @@
+## 2024-05-14 - Optimize Method Reflection
+**Learning:** Reflection operations in Android (such as looking up methods in Java classes) can be slow, especially when done repeatedly in hot paths. The `ShizukuCommandRunner.runCommand()` method is called each time an audio routing switch is triggered, and it was dynamically looking up the `Shizuku.newProcess` method each time.
+**Action:** Always cache reflected methods if they don't change. We used `by lazy` to initialize the reflected `newProcess` method once and reuse it across multiple calls. This prevents redundant method lookups and enhances performance during active usage.
